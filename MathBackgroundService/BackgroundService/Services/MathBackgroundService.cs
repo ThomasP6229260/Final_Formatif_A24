@@ -82,7 +82,7 @@ public class MathBackgroundService : BackgroundService
             // TODO: Modifier et sauvegarder le NbRightAnswers des joueurs qui ont la bonne réponse
             if (userData.Choice == _currentQuestion!.RightAnswerIndex)
             {
-
+                await _mathQuestionHub.Clients.User(userId).SendAsync("goodAnswer", "All riiight");
             }
             else
             {
