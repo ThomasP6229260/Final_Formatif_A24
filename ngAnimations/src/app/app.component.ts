@@ -46,6 +46,7 @@ export class AppComponent {
    ng_bounce : number = 0;
    css_rotateTop : boolean = false;
    css_rotateCenter : boolean = false;
+   rotateleft : boolean = false;
   title = 'ngAnimations';
 
   constructor() {
@@ -106,6 +107,13 @@ export class AppComponent {
   }
 
   death3() {
-    
+    var element = document.getElementById("alice");
+
+    if (element?.classList.contains("rotate-left"))
+     element?.classList.remove("rotate-left");
+    else
+    element?.classList.add("rotate-left");
+
+    this.rotateleft = false;
   }
 }
