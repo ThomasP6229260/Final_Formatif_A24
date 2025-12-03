@@ -3,6 +3,7 @@ using BackgroundServiceMath.Models;
 using BackgroundServiceVote.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BackgroundServiceMath.Services;
 
@@ -19,6 +20,7 @@ public class MathBackgroundService : BackgroundService
     private Dictionary<string, UserData> _data = new();
 
     private IHubContext<MathQuestionsHub> _mathQuestionHub;
+    IServiceScopeFactory _serviceScopeFactory;
 
     private MathQuestion? _currentQuestion;
 
@@ -26,16 +28,17 @@ public class MathBackgroundService : BackgroundService
 
     private MathQuestionsService _mathQuestionsService;
 
-    public MathBackgroundService(IHubContext<MathQuestionsHub> mathQuestionHub, MathQuestionsService mathQuestionsService)
+    public MathBackgroundService(IHubContext<MathQuestionsHub> mathQuestionHub, MathQuestionsService mathQuestionsService, IServiceScopeFactory serviceScopeFactory)
     {
         _mathQuestionHub = mathQuestionHub;
         _mathQuestionsService = mathQuestionsService;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public void AddUser(string userId)
     {
         if (!_data.ContainsKey(userId))
-        { 
+        {
             _data[userId] = new UserData();
         }
         _data[userId].NbConnections++;
@@ -46,7 +49,7 @@ public class MathBackgroundService : BackgroundService
         if (!_data.ContainsKey(userId))
         {
             _data[userId].NbConnections--;
-            if(_data[userId].NbConnections <= 0)
+            if (_data[userId].NbConnections <= 0)
                 _data.Remove(userId);
         }
     }
@@ -57,7 +60,7 @@ public class MathBackgroundService : BackgroundService
             return;
 
         UserData userData = _data[userId];
-            
+
         if (userData.Choice != -1)
             throw new Exception("A user cannot change is choice!");
 
@@ -66,6 +69,7 @@ public class MathBackgroundService : BackgroundService
         _currentQuestion.PlayerChoices[choice]++;
 
         // TODO: Notifier les clients qu'un joueur a choisi une réponse
+        await _mathQuestionHub.Clients.All.SendAsync("IncreasePlayersChoices", _currentQuestion.PlayerChoices[choice]);
     }
 
     private async Task EvaluateChoices()

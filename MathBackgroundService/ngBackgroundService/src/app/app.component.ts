@@ -118,7 +118,8 @@ export class AppComponent {
     this.hubConnection.on('IncreasePlayersChoices', (choiceIndex: number) => {
       this.zone.run(() => {
         if (this.currentQuestion) {
-          this.currentQuestion.playerChoices[choiceIndex]++;
+        //  this.currentQuestion.playerChoices[choiceIndex]++;
+          console.log(this.currentQuestion.playerChoices[choiceIndex]);
         }
       });
     });
