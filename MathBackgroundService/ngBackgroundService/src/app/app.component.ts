@@ -135,6 +135,17 @@ export class AppComponent {
       });
     });
 
+    this.hubConnection.on('wrongAnswer', (choiceIndex: number) => {
+      this.zone.run(() => {
+        if (this.currentQuestion) {
+        //  this.currentQuestion.playerChoices[choiceIndex]++;
+          alert("Ah come on");
+          //this.nbRightAnswers++;
+          console.log("T'as eu " + this.nbRightAnswers + " bonnes réponses big");
+        }
+      });
+    });
+
     this.hubConnection
       .start()
       .then(() => {
