@@ -1,15 +1,15 @@
 <div style="padding: 20px">
   <h1>Animation Angular</h1>
-  <button mat-raised-button color="accent">Animer une fois</button>
-  <button mat-raised-button color="accent">Animer en boucle</button>
-  <div class="square" style="background-color: red;"></div>
+  <button mat-raised-button color="accent"  (click)=death()>Animer une fois</button>
+  <button mat-raised-button color="accent" (click)=death2() >Animer en boucle</button>
+  <div class="square" style="background-color: red;"   [@death] = "ng_death"></div>
 
-  <div class="square" style="background-color: green;"></div>
+  <div class="square" style="background-color: green;"  [@green] = "ng_green"></div>
 
-  <div class="square" style="background-color: blue;"></div>
+  <div class="square" style="background-color: blue;"  [@green] = "ng_blue"></div>
 </div>
 <div style="padding: 20px">
   <h1>Animation CSS</h1>
-  <button mat-raised-button color="accent">Faire tourner</button>
-  <div class="square" style="background-color:orange;"></div>
+  <button mat-raised-button color="accent" (click)=death3() >Faire tourner</button>
+  <div class="square" style="background-color:orange;"  [@death3] = "ng_death3" ></div>
 </div>
