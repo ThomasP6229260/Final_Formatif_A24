@@ -69,7 +69,7 @@ public class MathBackgroundService : BackgroundService
         _currentQuestion.PlayerChoices[choice]++;
 
         // TODO: Notifier les clients qu'un joueur a choisi une réponse
-        await _mathQuestionHub.Clients.All.SendAsync("IncreasePlayersChoices", _currentQuestion.PlayerChoices[choice]);
+        await _mathQuestionHub.Clients.All.SendAsync("IncreasePlayersChoices", choice);
     }
 
     private async Task EvaluateChoices()
@@ -88,6 +88,7 @@ public class MathBackgroundService : BackgroundService
             {
                 await _mathQuestionHub.Clients.User(userId).SendAsync("wrongAnswer", "Ah come on");
             }
+           // CurrentQuestion.PlayerChoices = [];
 
         }
         // Reset

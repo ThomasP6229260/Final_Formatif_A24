@@ -61,7 +61,20 @@ export class AppComponent {
 
   selectChoice(choice: number) {
     this.selection = choice;
+    console.log("Le joueur a choisi le choix " + choice)
     this.hubConnection!.invoke('SelectChoice', choice);
+
+
+    // this.hubConnection?.on('IncreasePlayersChoices', (choiceIndex: number) => {
+    //   this.zone.run(() => {
+    //     if (this.currentQuestion) {
+    //     //  this.currentQuestion.playerChoices[choiceIndex]++;
+    //       console.log(this.currentQuestion.playerChoices[choiceIndex]);
+    //      // console.log("nbAnswers = " + numberAnswers)
+    //       this.currentQuestion.playerChoices[choice] = choiceIndex;
+    //     }
+    //   });
+    // });
   }
 
   async register() {
@@ -112,6 +125,8 @@ export class AppComponent {
         console.log(data);
         this.selection = -1;
         this.currentQuestion = data;
+        
+        
       });
     });
 
@@ -119,7 +134,7 @@ export class AppComponent {
       this.zone.run(() => {
         if (this.currentQuestion) {
         //  this.currentQuestion.playerChoices[choiceIndex]++;
-          console.log(this.currentQuestion.playerChoices[choiceIndex]);
+          this.currentQuestion.playerChoices[choiceIndex]++;
         }
       });
     });
@@ -128,22 +143,24 @@ export class AppComponent {
       this.zone.run(() => {
         if (this.currentQuestion) {
         //  this.currentQuestion.playerChoices[choiceIndex]++;
-          alert("Allriiight");
+          console.log("Allriiight");
           this.nbRightAnswers++;
           console.log("T'as eu " + this.nbRightAnswers + " bonnes réponses big");
         }
       });
+    console.log("yo les mecs!!!")
     });
 
     this.hubConnection.on('wrongAnswer', (choiceIndex: number) => {
       this.zone.run(() => {
         if (this.currentQuestion) {
         //  this.currentQuestion.playerChoices[choiceIndex]++;
-          alert("Ah come on");
+          console.log("Ah come on");
           //this.nbRightAnswers++;
           console.log("T'as eu " + this.nbRightAnswers + " bonnes réponses big");
         }
       });
+
     });
 
     this.hubConnection
