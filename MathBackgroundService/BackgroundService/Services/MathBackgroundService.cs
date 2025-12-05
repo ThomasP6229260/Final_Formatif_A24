@@ -1,9 +1,11 @@
 ﻿using BackgroundServiceMath.Data;
 using BackgroundServiceMath.Models;
 using BackgroundServiceVote.Hubs;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace BackgroundServiceMath.Services;
 
@@ -83,12 +85,25 @@ public class MathBackgroundService : BackgroundService
             if (userData.Choice == _currentQuestion!.RightAnswerIndex)
             {
                 await _mathQuestionHub.Clients.User(userId).SendAsync("goodAnswer", "All riiight");
+
+
+                using (IServiceScope scope = _serviceScopeFactory.CreateScope())
+                {
+                    BackgroundServiceContext dbContext = scope.ServiceProvider.GetRequiredService<BackgroundServiceContext>();
+
+
+                    Player player = dbContext.Player.Where(a => a.UserId == userId).First();
+
+                    player.NbRightAnswers++;
+                    dbContext.SaveChangesAsync();
+                }
             }
             else
             {
                 await _mathQuestionHub.Clients.User(userId).SendAsync("wrongAnswer", "Ah come on");
             }
-           // CurrentQuestion.PlayerChoices = [];
+            // CurrentQuestion.PlayerChoices = [];
+       
 
         }
         // Reset
