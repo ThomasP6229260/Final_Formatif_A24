@@ -12,12 +12,24 @@ namespace WebAPI.Tests;
 [TestClass]
 public class SeatsControllerTests
 {
- 
+
+    Mock<SeatsService> serviceMock;
+    Mock<SeatsController> controllerMock;
+
+    public SeatsControllerTests()
+    {
+        serviceMock = new Mock<SeatsService>();
+        controllerMock = new Mock<SeatsController>(serviceMock.Object) { CallBase = true };
+
+        controllerMock.Setup(c => c.UserId).Returns("11111");
+    }
+
+
+
     [TestMethod]
     public void ReserveSeatOK()
     {
-        // Arrange
-        var serviceMock = new Mock<SeatsService>();
+    
 
         // Mock du service pour renvoyer une Seat
         serviceMock.Setup(s => s.ReserveSeat("1", 1))
@@ -45,43 +57,26 @@ public class SeatsControllerTests
 
 
     [TestMethod]
-    public void ReserveSeatAlreadyTaken()
+    public void ReserveSeat_SeatAlreadyTaken()
     {
-        Mock<SeatsService> serviceMock = new Mock<SeatsService>();
-        // Notez l'utilisation de CallBase = true
-        // On veut un véritable objet CatsController et changer son comportement seulement pour la propriété UserId!
-        // L'option CallBase = true nous permet de garder le comportement normal des méthode de la classe. 
-        Mock<SeatsController> controller = new Mock<SeatsController>(serviceMock.Object) { CallBase = true };
+        serviceMock.Setup(s => s.ReserveSeat(It.IsAny<string>(), It.IsAny<int>())).Throws(new SeatAlreadyTakenException());
 
+        var actionresult = controllerMock.Object.ReserveSeat(1);
 
-        Seat s = new Seat()
-        {
-            Id = 1,
-            Number = 48,
-            ExamenUserId = "2",
-
-        };
-        Seat sFree = new Seat()
-        {
-            Id = 2,
-            Number = 47,
-            
-
-        };
-
-        controller.Setup(c => c.UserId).Returns("1");
-
-
-       
-
-        //serviceMock.Setup(s => s.ReserveSeat("1", 1)).Throws(new SeatAlreadyTakenException());
-
-         var actionResult = controller.Object.ReserveSeat(1);
-
-        var result = actionResult.Result as UnauthorizedResult;
-
+        var result = actionresult.Result as UnauthorizedResult;
         Assert.IsNotNull(result);
+    }
 
-        //Assert.AreEqual("Cat is not yours", result.Value);
+    [TestMethod]
+    public void SeatOutOfBounds()
+    {
+        serviceMock.Setup(s => s.ReserveSeat(It.IsAny<string>(), It.IsAny<int>())).Throws(new SeatOutOfBoundsException());
+
+        var actionresult = controllerMock.Object.ReserveSeat(1890420);
+
+        var result = actionresult?.Result as NotFoundObjectResult;
+        Assert.AreEqual(result.Value, "Could not find 1890420");
+
+
     }
 }
