@@ -72,10 +72,10 @@ public class SeatsControllerTests
     {
         serviceMock.Setup(s => s.ReserveSeat(It.IsAny<string>(), It.IsAny<int>())).Throws(new SeatOutOfBoundsException());
 
-        var actionresult = controllerMock.Object.ReserveSeat(1890420);
+        var actionresult = controllerMock.Object.ReserveSeat(5);
 
         var result = actionresult?.Result as NotFoundObjectResult;
-        Assert.AreEqual(result.Value, "Could not find 1890420");
+        Assert.AreEqual(result.Value, "Could not find 5");
 
 
     }
@@ -84,11 +84,11 @@ public class SeatsControllerTests
     public void UserAlreadySeated()
     {
         serviceMock.Setup(s => s.ReserveSeat("11111", 1)).Throws(new UserAlreadySeatedException());
-        serviceMock.Setup(s => s.ReserveSeat("11111", 2)).Throws(new UserAlreadySeatedException());
+       // serviceMock.Setup(s => s.ReserveSeat("11111", 1)).Throws(new UserAlreadySeatedException());
         var actionresult = controllerMock.Object.ReserveSeat(1);
         var actionresult2 = controllerMock.Object.ReserveSeat(1);
 
-        var result = actionresult2?.Result as BadRequestObjectResult;
+        var result = actionresult2?.Result as BadRequestResult;
         Assert.IsNotNull(result);
     }
 }
