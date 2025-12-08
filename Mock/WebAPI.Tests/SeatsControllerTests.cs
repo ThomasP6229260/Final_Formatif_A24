@@ -79,4 +79,16 @@ public class SeatsControllerTests
 
 
     }
+
+    [TestMethod]
+    public void UserAlreadySeated()
+    {
+        serviceMock.Setup(s => s.ReserveSeat("11111", 1)).Throws(new UserAlreadySeatedException());
+        serviceMock.Setup(s => s.ReserveSeat("11111", 2)).Throws(new UserAlreadySeatedException());
+        var actionresult = controllerMock.Object.ReserveSeat(1);
+        var actionresult2 = controllerMock.Object.ReserveSeat(1);
+
+        var result = actionresult2?.Result as BadRequestObjectResult;
+        Assert.IsNotNull(result);
+    }
 }
